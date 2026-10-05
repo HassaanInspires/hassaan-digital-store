@@ -1,0 +1,78 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #09090b;
+    --card: #ffffff;
+    --card-foreground: #09090b;
+    --popover: #ffffff;
+    --popover-foreground: #09090b;
+    --primary: #059669;
+    --primary-foreground: #ffffff;
+    --secondary: #f4f4f5;
+    --secondary-foreground: #18181b;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --accent: #ecfdf5;
+    --accent-foreground: #065f46;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #e4e4e7;
+    --input: #e4e4e7;
+    --ring: #059669;
+    --radius: 0.5rem;
+  }
+
+  /* Palette 1: Precision Emerald (Default / Muhammad Hassaan Khan Inspired) */
+  [data-palette="emerald"], :root {
+    --primary: #059669;
+    --primary-foreground: #ffffff;
+    --accent: #ecfdf5;
+    --accent-foreground: #047857;
+    --ring: #059669;
+  }
+
+  /* Palette 2: Monolith Cyber-Amber (Linear / Industrial Precision) */
+  [data-palette="amber"] {
+    --primary: #d97706;
+    --primary-foreground: #ffffff;
+    --accent: #fffbeb;
+    --accent-foreground: #b45309;
+    --ring: #d97706;
+  }
+
+  /* Palette 3: Hyper-Cobalt (Vercel / High-Velocity Cloud) */
+  [data-palette="cobalt"] {
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+    --accent: #eff6ff;
+    --accent-foreground: #1d4ed8;
+    --ring: #2563eb;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Touch Target Minimum Enforcement (>= 44px) */
+.touch-target-min {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
