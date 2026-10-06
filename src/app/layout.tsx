@@ -46,32 +46,57 @@ export const metadata: Metadata = {
 };
 
 import { SwissNavBar } from "@/components/ui/SwissNavBar";
+import { CmdKMenu } from "@/components/ui/CmdKMenu";
 import Link from "next/link";
+import Script from "next/script";
+import { supabase } from "@/lib/supabase";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch products for global search
+  const { data: products } = await supabase.from("products").select("id, slug, title, subtitle").eq("is_active", true);
+
   return (
     <html lang="en" data-palette="emerald" data-font="geist">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} font-sans antialiased min-h-screen bg-white text-zinc-950 selection:bg-zinc-200 selection:text-zinc-900`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} font-sans antialiased min-h-screen bg-zinc-50 text-zinc-950 selection:bg-zinc-200 selection:text-zinc-900`}
       >
+        <CmdKMenu products={products || []} />
         <SwissNavBar />
         {children}
-        <footer className="w-full bg-white border-t border-zinc-100 py-12 px-6">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-sm font-mono text-zinc-400 uppercase tracking-widest">
-              © {new Date().getFullYear()} M. Hassaan Khan
+        <footer className="w-full bg-zinc-950 text-white pt-24 pb-12 px-6 border-t border-zinc-900">
+          <div className="max-w-6xl mx-auto flex flex-col gap-16">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+              <div>
+                <h2 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-white leading-none">
+                  HASSAAN<br/>KHAN.
+                </h2>
+                <p className="mt-4 font-mono text-[10px] font-bold tracking-widest uppercase text-zinc-400">
+                  Principal Architect · Digital Storefront
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 font-sans text-sm font-bold text-zinc-400 text-right">
+                <Link className="hover:text-white transition-colors" href="/catalog">Catalog</Link>
+                <Link className="hover:text-white transition-colors" href="/partners">Partners</Link>
+                <Link className="hover:text-white transition-colors" href="/contact">Contact</Link>
+              </div>
             </div>
-            <div className="flex items-center gap-6 text-sm font-medium text-zinc-500">
-              <Link className="hover:text-zinc-950 transition-colors" href="/privacy">Privacy</Link>
-              <Link className="hover:text-zinc-950 transition-colors" href="/terms">Terms</Link>
-              <Link className="hover:text-zinc-950 transition-colors" href="/contact">Contact</Link>
+            
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-zinc-800">
+              <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-bold">
+                © {new Date().getFullYear()} M. Hassaan Khan
+              </div>
+              <div className="flex items-center gap-6 text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">
+                <Link className="hover:text-white transition-colors" href="/privacy">Privacy</Link>
+                <Link className="hover:text-white transition-colors" href="/terms">Terms</Link>
+              </div>
             </div>
           </div>
         </footer>
+        <Script src="https://app.lemonsqueezy.com/js/lemon.js" strategy="afterInteractive" />
       </body>
     </html>
   );

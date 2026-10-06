@@ -1,10 +1,10 @@
 import React from "react";
 import { PRODUCTS } from "@/data/products";
-import { SwissProductCard } from "@/components/ui/SwissProductCard";
+import { StorefrontCatalog } from "@/components/catalog/StorefrontCatalog";
 
 export default function CatalogPage() {
   return (
-    <div className="min-h-screen bg-white text-zinc-950 font-sans selection:bg-zinc-200 selection:text-zinc-900 pt-32 sm:pt-40 pb-24 px-4 sm:px-6">
+    <div className="min-h-screen text-zinc-950 font-sans selection:bg-zinc-200 selection:text-zinc-900 pt-32 sm:pt-40 pb-24 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="space-y-3 max-w-2xl">
@@ -19,11 +19,9 @@ export default function CatalogPage() {
           </p>
         </div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-4">
-          {PRODUCTS.map((product) => (
-            <SwissProductCard key={product.id} product={product} />
-          ))}
+        {/* Dynamic Filtered Product Grid */}
+        <div className="pt-4">
+          <StorefrontCatalog products={PRODUCTS} />
         </div>
       </div>
     </div>

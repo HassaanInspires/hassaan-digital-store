@@ -1,85 +1,88 @@
-"use client";
-
 import React from "react";
-import { useRouter } from "next/navigation";
-import { ArrowRight, ExternalLink } from "lucide-react";
-import { Product } from "@/data/products";
-import { StudioProductRender } from "./StudioProductRender";
+import Link from "next/link";
+import { FlatProductCover } from "./FlatProductCover";
+import { LemonBuyButton } from "../checkout/LemonBuyButton";
 
-interface SwissProductCardProps {
-  product: Product;
-  onAction?: (product: Product) => void;
-}
+export function SwissProductCard({ product }: { product: any }) {
+  const meta = product.ui_metadata || {};
+  
+  const rawCat = (meta.category || product.category || "").toLowerCase();
+  const category = (
+    rawCat === "uikit" || rawCat === "ui-kit" || rawCat === "ui" ? "uikit" :
+    rawCat === "infrastructure" || rawCat === "infra" || rawCat === "cloud" ? "infrastructure" :
+    rawCat === "ebook" || rawCat === "book" ? "ebook" :
+    product.slug?.includes("glass") || product.title?.toLowerCase().includes("glass") || product.id?.includes("glass") ? "uikit" :
+    product.slug?.includes("infra") || product.title?.toLowerCase().includes("infra") || product.slug?.includes("supabase") || product.id?.includes("infra") || product.id?.includes("supabase") ? "infrastructure" :
+    "ebook"
+  );
 
-export function SwissProductCard({ product, onAction }: SwissProductCardProps) {
-  const router = useRouter();
-  const isAffiliate = product.type === "affiliate";
+  const badge = meta.badge || product.badge || (
+    category === "uikit" ? "UI Kit" :
+    category === "infrastructure" ? "Infrastructure" :
+    "E-Book"
+  );
 
-  const handleAction = () => {
-    if (onAction) {
-      onAction(product);
-    } else {
-      router.push(`/products/${product.id}`);
-    }
-  };
+  const categoryLabel = (
+    category === "uikit" ? "UI Kit" :
+    category === "infrastructure" ? "Infrastructure" :
+    "E-Book"
+  );
+
+  const slug = product.slug || product.id || "";
+
+  const originalPrice = meta.original_price ?? product.original_price ?? (
+    (slug === "hyper-glass-design-engine") ? 99 :
+    (meta.originalPrice ?? null)
+  );
+  const hasDiscount = Boolean(originalPrice && Number(originalPrice) > Number(product.price));
 
   return (
-    <div
-      onClick={handleAction}
-      className="group cursor-pointer rounded-2xl sm:rounded-3xl bg-white border border-zinc-200/90 p-5 sm:p-6 flex flex-col justify-between space-y-6 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-2xl hover:border-zinc-300 transform-gpu [transform:translateZ(0)]"
-    >
-      {/* Studio Render Viewport with scale physics on card hover */}
-      <div className="w-full overflow-hidden rounded-xl sm:rounded-2xl">
-        <StudioProductRender
-          type={product.category}
-          title={product.title}
-          badge={product.badge}
-        />
-      </div>
-
-      {/* Card Content */}
-      <div className="space-y-4 flex-1 flex flex-col justify-between">
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-zinc-100 text-zinc-700 border border-zinc-200/60">
-              {product.badge}
-            </span>
-            <span className="font-sans text-sm font-bold text-zinc-950">
-              {isAffiliate ? "Free Perk" : `$${product.price}.00`}
+    <div className="group relative flex flex-col bg-white/60 backdrop-blur-xl border border-zinc-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 rounded-[24px] overflow-hidden transition-all duration-500">
+      
+      {/* 2D Flat Cover Area */}
+      <Link href={`/products/${slug}`} className="block relative p-4 pb-0">
+        <div className="rounded-[16px] overflow-hidden bg-zinc-50 border border-zinc-100 relative">
+          <FlatProductCover
+            category={category}
+            title={product.title}
+            badge={badge}
+          />
+          {/* Top Left: Glassy Category Pill */}
+          <div className="absolute top-4 left-4 z-20">
+            <span className="bg-white/80 backdrop-blur-md text-zinc-900 border border-zinc-200/50 px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase shadow-sm">
+              {categoryLabel}
             </span>
           </div>
+        </div>
+      </Link>
 
-          <h3 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 group-hover:text-blue-600 transition-colors">
+      {/* Content Section */}
+      <div className="p-6 flex flex-col flex-grow">
+        <Link href={`/products/${slug}`} className="block mb-2">
+          <h3 className="text-xl font-bold tracking-tight text-zinc-950 leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">
             {product.title}
           </h3>
+        </Link>
+        <p className="text-sm text-zinc-500 leading-relaxed line-clamp-2 mb-6">
+          {product.subtitle || product.description}
+        </p>
 
-          <p className="font-sans text-xs sm:text-sm font-normal text-zinc-600 leading-relaxed line-clamp-2">
-            {product.subtitle}
-          </p>
-        </div>
-
-        {/* Action Bar */}
-        <div className="pt-3 border-t border-zinc-100 flex items-center justify-between">
-          <span className="font-sans text-xs font-semibold text-zinc-950 group-hover:text-blue-600 flex items-center gap-1.5 transition-colors">
-            <span>{isAffiliate ? "Claim $50 Credit" : "Explore Details"}</span>
-            {isAffiliate ? (
-              <ExternalLink className="w-3.5 h-3.5" />
-            ) : (
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+        {/* Condensed Action Row */}
+        <div className="mt-auto pt-5 border-t border-zinc-200/50 flex items-center justify-between gap-4">
+          <div className="flex flex-col">
+            <span className="text-xl font-black text-zinc-950 tracking-tighter leading-none">
+              {Number(product.price) === 0 ? "Free" : `$${Number(product.price).toFixed(2)}`}
+            </span>
+            {hasDiscount && (
+              <span className="text-xs font-mono text-zinc-400 line-through mt-1">
+                ${Number(originalPrice).toFixed(2)}
+              </span>
             )}
-          </span>
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAction();
-            }}
-            className="min-h-[44px] min-w-[44px] px-4 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950"
-            aria-label={`Open details for ${product.title}`}
-          >
-            {isAffiliate ? "Referral" : "View"}
-          </button>
+          </div>
+          
+          <div className="w-32 [&>a]:rounded-full">
+            <LemonBuyButton variantId={meta.lemon_variant_id || product.lemon_variant_id} />
+          </div>
         </div>
       </div>
     </div>

@@ -1,170 +1,164 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { SwissProductCard } from "@/components/ui/SwissProductCard";
-import { StudioProductRender } from "@/components/ui/StudioProductRender";
-import { Product } from "@/data/products";
+import { StorefrontCatalog } from "@/components/catalog/StorefrontCatalog";
+import { FlatProductCover } from "@/components/ui/FlatProductCover";
+import { Product, PRODUCTS } from "@/data/products";
 
 export default async function ConceptThreePage() {
-  // Fetch active products directly from Supabase
   const { data: products, error } = await supabase
     .from('products')
     .select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error("Supabase fetch error:", error.message);
-  }
+  if (error) console.error("Supabase fetch error:", error.message);
 
-  // Safely fallback to empty arrays if database is empty during initial setup
-  const safeProducts = products || [];
-  
-  // Example of how to separate an anchor product if your UI requires it
-  const anchorEbook = safeProducts.find((p) => p.slug === "autonomous-systems-architecture") || null;
-  const remainingProducts = safeProducts.filter((p) => p.slug !== "autonomous-systems-architecture");
+  const initialProducts: any[] = (products && products.length > 0) ? products : PRODUCTS;
+  const allProducts: any[] = initialProducts.length > 1
+    ? initialProducts
+    : [
+        ...initialProducts,
+        ...PRODUCTS.filter(
+          (item: Product) => !initialProducts.some((p: any) => p.slug === item.id || p.id === item.id)
+        ),
+      ];
+
+  const anchorEbook =
+    allProducts.find((p: any) => p.slug === "autonomous-systems-architecture" || p.id === "autonomous-systems-architecture") || null;
+  const remainingProducts = allProducts.filter(
+    (p: any) => p.slug !== "autonomous-systems-architecture" && p.id !== "autonomous-systems-architecture"
+  );
 
   return (
-    <div className="min-h-screen bg-white text-zinc-950 font-sans selection:bg-zinc-200 selection:text-zinc-900 overflow-x-clip">
-      {/* Main Content Area */}
-      <main className="pt-14">
-        {/* 2. HERO SECTION: Swiss Minimalism with Extreme Negative Space (pt-40) & Tighter Tracking */}
-        <section
-          id="overview"
-          className="max-w-5xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-24 sm:pb-32 text-center flex flex-col items-center justify-center space-y-8"
-        >
-          {/* Version Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-xs font-semibold text-zinc-800">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-            <span>Storefront 2026 · Swiss Architecture</span>
+    <div className="min-h-screen text-zinc-950 font-sans selection:bg-zinc-200 selection:text-zinc-900 bg-white">
+      <main className="pt-24 pb-20">
+        
+        {/* HERO SECTION: Ultra-Premium Apple-Style Landing */}
+        <section className="relative w-full overflow-hidden flex flex-col items-center justify-center text-center min-h-[85vh] pt-32 pb-32 border-b border-zinc-100">
+          
+          {/* Glassmorphic Background Elements */}
+          <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-60 -z-20" />
+          
+          {/* Massive subtle glow orb behind the text for the transparent navbar to interact with */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-blue-100/40 rounded-[100%] blur-[120px] -z-10 pointer-events-none" />
+          
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100 fill-mode-both inline-flex items-center gap-2 px-4 py-1.5 bg-white/80 backdrop-blur-md border border-zinc-200/60 rounded-full shadow-sm mb-8 relative z-10">
+            <span className="w-1.5 h-1.5 bg-zinc-900 rounded-full animate-pulse" />
+            <span className="font-sans text-xs font-bold tracking-tight text-zinc-600">
+              Storefront 2026
+            </span>
           </div>
 
-          {/* Massive, Bold, Center-Aligned Headline with tracking-tighter & leading-[0.92] */}
-          <h1 className="font-sans text-6xl sm:text-7xl lg:text-[5.5rem] font-black tracking-tighter text-zinc-950 text-balance leading-[0.92]">
-            Engineered for clarity. Built for leverage.
+          <h1 className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-both font-sans text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] max-w-5xl relative z-10">
+            <span className="bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-500 bg-clip-text text-transparent">
+              Engineered for clarity.
+            </span>
+            <br/>
+            <span className="text-zinc-950">
+              Built for leverage.
+            </span>
           </h1>
 
-          {/* Hyper-Clean Subhead */}
-          <p className="font-sans text-lg sm:text-2xl font-normal text-zinc-600 max-w-2xl mx-auto text-balance leading-relaxed">
+          <p className="animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300 fill-mode-both mt-8 font-sans text-lg md:text-xl text-zinc-600 max-w-2xl leading-relaxed relative z-10">
             Curated architectural blueprints, production component engines, and high-performance infrastructure by Muhammad Hassaan Khan.
           </p>
 
-          {/* Apple-Style Pill CTA Buttons */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-            {anchorEbook ? (
-              <Link 
-                href={`/products/${anchorEbook.slug}`}
-                className="w-full sm:w-auto min-h-[50px] px-8 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-sans text-sm font-semibold transition-all active:scale-[0.98] shadow-lg shadow-zinc-950/15 flex items-center justify-center gap-2"
-              >
-                <span>Explore Anchor E-Book</span>
-                <ArrowRight className="w-4 h-4 text-zinc-300" />
-              </Link>
-            ) : null}
-            <a href="#catalog" className="w-full sm:w-auto">
-              <button
-                type="button"
-                className="w-full sm:w-auto min-h-[50px] px-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border border-zinc-200 font-sans text-sm font-semibold transition-all active:scale-[0.98]"
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500 fill-mode-both mt-12 flex flex-col items-center gap-6 relative z-10">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              {anchorEbook && (
+                <Link 
+                  href={`/products/${anchorEbook.slug}`}
+                  className="group px-8 py-4 bg-zinc-950 hover:bg-zinc-800 text-white font-sans text-sm font-semibold rounded-full flex items-center gap-3 transition-all shadow-xl hover:shadow-2xl hover:shadow-zinc-900/20 hover:-translate-y-0.5"
+                >
+                  Explore Anchor Release
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              )}
+              <a 
+                href="#catalog"
+                className="px-8 py-4 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-900 font-sans text-sm font-semibold rounded-full transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
               >
                 Browse Catalog
-              </button>
-            </a>
+              </a>
+            </div>
+
+            {/* Micro Trust Signal directly under CTA */}
+            <div className="flex items-center gap-4 mt-2">
+              <div className="flex -space-x-2">
+                {[1,2,3,4,5].map((i) => (
+                  <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-zinc-200 flex items-center justify-center overflow-hidden">
+                    {/* Placeholder for avatars, using a generic silhouette or initial */}
+                    <span className="text-[9px] font-bold text-zinc-400">{i}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold text-zinc-800">Trusted by 5,000+ engineers</span>
+                <span className="text-[10px] text-zinc-500 font-medium">Lifetime Access • Encrypted Delivery</span>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* 3. PRIMARY ANCHOR PRODUCT SHOWCASE: Apple Feature Banner */}
+        {/* PRIMARY ANCHOR PRODUCT SHOWCASE (Flat 2D UI) */}
         {anchorEbook && (
-          <section
-            id="anchor-ebook"
-            className="max-w-6xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28"
-          >
-            <div className="rounded-3xl bg-zinc-50 border border-zinc-200/90 p-8 sm:p-14 lg:p-16 overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-                {/* Product Copy & Metadata */}
-                <div className="lg:col-span-6 space-y-6 text-left">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white text-zinc-800 border border-zinc-200 shadow-sm">
-                    <BookOpen className="w-3.5 h-3.5 text-zinc-900" />
-                    <span>Primary Release · 184 Pages</span>
-                  </span>
-
-                  <h2 className="font-sans text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 leading-tight">
-                    {anchorEbook.title}
-                  </h2>
-
-                  <p className="font-sans text-base sm:text-lg font-normal text-zinc-600 leading-relaxed">
-                    {anchorEbook.subtitle}
-                  </p>
-
-                  {/* Key Deliverables Highlights */}
-                  <div className="space-y-2 pt-2">
-                    <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-zinc-700">
-                      <CheckCircle2 className="w-4 h-4 text-zinc-950 shrink-0" />
-                      <span>Zero-loss state machine &amp; deterministic routing workflows</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-zinc-700">
-                      <CheckCircle2 className="w-4 h-4 text-zinc-950 shrink-0" />
-                      <span>Server-side social DRM watermark protection with <code className="font-semibold text-zinc-900">pdf-lib</code></span>
-                    </div>
+          <section className="max-w-6xl mx-auto px-6 py-24 border-b border-zinc-100">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center bg-white/60 backdrop-blur-xl border border-zinc-200/60 p-8 sm:p-12 rounded-[2rem] shadow-sm">
+              <div className="lg:col-span-5 rounded-[1.5rem] overflow-hidden border border-zinc-100">
+                <FlatProductCover
+                  category="ebook"
+                  title={anchorEbook.title}
+                  badge="Anchor Edition"
+                />
+              </div>
+              <div className="lg:col-span-7 space-y-6">
+                <span className="inline-block px-3 py-1.5 bg-zinc-100/80 text-zinc-800 font-sans text-xs font-semibold rounded-full border border-zinc-200/50">
+                  Primary Release
+                </span>
+                <h2 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-950 leading-none">
+                  {anchorEbook.title}
+                </h2>
+                <p className="text-lg text-zinc-600 leading-relaxed max-w-xl">
+                  {anchorEbook.subtitle}
+                </p>
+                <div className="space-y-3 pt-4">
+                  <div className="flex items-center gap-3 text-sm font-medium text-zinc-800">
+                    <CheckCircle2 className="w-5 h-5 text-zinc-400" />
+                    Zero-loss state machine workflows
                   </div>
-
-                  {/* CTA & Price */}
-                  <div className="pt-4 flex flex-wrap items-center gap-5">
-                    <Link
-                      href={`/products/${anchorEbook.slug}`}
-                      className="min-h-[48px] px-7 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-sans text-sm font-semibold transition-all active:scale-[0.98] shadow-md flex items-center gap-2"
-                    >
-                      <span>Inspect Details &amp; Buy</span>
-                      <ArrowRight className="w-4 h-4 text-zinc-300" />
-                    </Link>
-                    <span className="font-sans text-2xl font-black text-zinc-950">
-                      ${anchorEbook.price}
-                    </span>
+                  <div className="flex items-center gap-3 text-sm font-medium text-zinc-800">
+                    <CheckCircle2 className="w-5 h-5 text-zinc-400" />
+                    Server-side DRM watermark protection
                   </div>
                 </div>
-
-                {/* Studio Physical Product Render */}
-                <div className="lg:col-span-6 flex justify-center">
-                  <div className="w-full max-w-md">
-                    <StudioProductRender
-                      type="ebook"
-                      title={anchorEbook.title}
-                      badge="Anchor Edition"
-                    />
-                  </div>
+                <div className="pt-6 flex items-center gap-6">
+                  <span className="text-3xl font-black text-zinc-950">${anchorEbook.price}</span>
+                  <Link
+                    href={`/products/${anchorEbook.slug}`}
+                    className="px-6 py-3 bg-zinc-950 hover:bg-zinc-800 text-white font-semibold rounded-full flex items-center gap-2 transition-colors shadow-md"
+                  >
+                    Inspect Details <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
             </div>
           </section>
         )}
 
-        {/* 4. PREMIUM PRODUCT GRID: Flawlessly Aligned 3-Column Studio Grid */}
+        {/* CATALOG SECTION */}
         {remainingProducts.length > 0 && (
-          <section
-            id="catalog"
-            className="max-w-6xl mx-auto px-4 sm:px-6 pb-28 sm:pb-36 space-y-10"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-200 pb-6">
-              <div>
-                <span className="font-sans text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                  Precision Catalog
-                </span>
-                <h2 className="font-sans text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 mt-1">
-                  All Engineering Assets
-                </h2>
-              </div>
-              <p className="font-sans text-xs sm:text-sm text-zinc-500 max-w-xs">
-                Every asset is architected for zero-friction integration in production stacks.
-              </p>
+          <section id="catalog" className="max-w-6xl mx-auto px-6 py-24">
+            <div className="mb-12">
+              <span className="font-mono text-[10px] font-bold tracking-widest uppercase text-zinc-500 block mb-2">
+                Precision Catalog
+              </span>
+              <h2 className="text-4xl font-black tracking-tight text-zinc-950">
+                All Engineering Assets
+              </h2>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {remainingProducts.map((product) => (
-                <SwissProductCard
-                  key={product.id}
-                  product={product as unknown as Product}
-                />
-              ))}
-            </div>
+            <StorefrontCatalog products={remainingProducts} />
           </section>
         )}
       </main>

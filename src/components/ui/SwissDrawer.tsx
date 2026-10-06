@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { X, ShieldCheck, Download, CheckCircle2, ArrowRight } from "lucide-react";
 import { Product } from "@/data/products";
-import { StudioProductRender } from "./StudioProductRender";
+import { FlatProductCover } from "./FlatProductCover";
 
 interface SwissDrawerProps {
   product: Product | null;
@@ -74,8 +74,8 @@ export function SwissDrawer({ product, isOpen, onClose }: SwissDrawerProps) {
         {/* 2. Scrollable Body: Independent flex-1 min-h-0 container that scrolls smoothly */}
         <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6 overscroll-contain">
           <div className="rounded-2xl overflow-hidden border border-zinc-200/80">
-            <StudioProductRender
-              type={product.category}
+            <FlatProductCover
+              category={product.category}
               title={product.title}
               badge={product.badge}
             />
